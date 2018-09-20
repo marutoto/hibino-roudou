@@ -31,6 +31,7 @@
     var jitsu = (function () {
         var passedDateCnt = 0
         var absenceDateCnt = 0
+        var errorDateCnt = 0
         var timeH = 0
         var timeM = 0
 
@@ -53,12 +54,12 @@
         hibinoganbariTrs.forEach(function (tr, i) {
             var tds = Array.prototype.slice.call(tr.querySelectorAll('td'))
 
-            // 休日チェック
+            // -- 休日チェック
             if ('' !== tds[tdEqHoliday].innerHTML.trim()) {
                 return // 休日
             }
 
-            // 日付チェック（本日以降かどうか）
+            // -- 日付チェック（本日以降かどうか）
             var dateMatched = tds[tdEqDate].innerHTML.trim().match(/(\d+)\/(\d+)/)
             var tdMonth = Number(dateMatched[1])
             var tdDate  = Number(dateMatched[2])
@@ -67,16 +68,25 @@
                 return // 本日以降
             }
 
-            // 経過日数
+            // -- 経過日数
             passedDateCnt++
 
-            // 欠勤日数（申請中含む）
+            // -- 欠勤日数（申請中含む）
             if (0 <= tds[tdEqYukyu].innerHTML.search('欠')) {
                 absenceDateCnt++
                 return
             }
 
-            // 承認済み半休
+            // -- 勤怠エラー日数（手動打刻申請中、など）
+            if (tr.style.backgroundColor === 'pink') {
+                // ↓ これでもいい
+                // tr.getAttribute('style') // -> 'background-color: pink'
+                errorDateCnt++
+                return
+            }
+
+            // -- 実労働時間
+            // [例外判定・処置] 承認済み半休
             if (0 <= tds[tdEqYukyu].innerHTML.search('午前休') || 0 <= tds[tdEqYukyu].innerHTML.search('午後休')) {
                 var roudou = tds[tdEqRoudou].innerHTML.trim()
                 if ('04:00' === roudou) {
@@ -90,7 +100,7 @@
                 return
             }
 
-            // 実労働時間
+            // [正常]
             var roudou = tds[tdEqRoudou].innerHTML.trim()
             if ('' !== roudou) {
                 var roudouMatched = roudou.match(/(\d+):(\d+)/)
@@ -99,12 +109,13 @@
             }
         })
 
-        return [passedDateCnt, absenceDateCnt, timeH, timeM]
+        return [passedDateCnt, absenceDateCnt, errorDateCnt, timeH, timeM]
     })()
     var passedDateCnt      = jitsu[0]
     var absenceDateCnt     = jitsu[1]
-    var timeH              = jitsu[2]
-    var timeM              = jitsu[3]
+    var errorDateCnt       = jitsu[2]
+    var timeH              = jitsu[3]
+    var timeM              = jitsu[4]
 
     // -- Calc
     var syoteiHour = syotei * 8
@@ -123,6 +134,9 @@
         var totalMinExpected  = totalMin
         if (0 < absenceDateCnt) {
             totalHourExpected += absenceDateCnt * 8
+        }
+        if (0 < errorDateCnt) {
+            totalHourExpected += errorDateCnt * 8
         }
 
         return [totalHour, totalMin, totalHourExpected, totalMinExpected]
@@ -147,6 +161,9 @@
         var remainMinExpected  = remainMin
         if (0 < absenceDateCnt) {
             remainHourExpected -= absenceDateCnt * 8
+        }
+        if (0 < errorDateCnt) {
+            remainHourExpected -= errorDateCnt * 8
         }
 
         return [remainHour, remainMin, remainHourExpected, remainMinExpected]
@@ -218,24 +235,25 @@
     var res3  = passedDateCnt
     var res4  = remainDateCnt
     var res5  = absenceDateCnt
-    var res6  = ('000' + roudouTotalHour).slice(-3)
-    var res7  = ('00' + roudouTotalMin).slice(-2)
-    var res8  = ('000' + roudouTotalHourExpected).slice(-3)
-    var res9  = ('00' + roudouTotalMinExpected).slice(-2)
-    var res10 = ('000' + roudouRemainHour).slice(-3)
-    var res11 = ('00' + roudouRemainMin).slice(-2)
-    var res12 = ('00' + roudouRemainAvgHour).slice(-2)
-    var res13 = ('00' + roudouRemainAvgMin).slice(-2)
-    var res14 = ('000' + roudouAheadBehindHour).slice(-2)
-    var res15 = ('00' + roudouAheadBehindMin).slice(-2)
-    var res16 = isBehind
-    var res17 = ('000' + roudouRemainHourExpected).slice(-3)
-    var res18 = ('00' + roudouRemainMinExpected).slice(-2)
-    var res19 = ('00' + roudouRemainAvgHourExpected).slice(-2)
-    var res20 = ('00' + roudouRemainAvgMinExpected).slice(-2)
-    var res21 = ('000' + roudouAheadBehindHourExpected).slice(-2)
-    var res22 = ('00' + roudouAheadBehindMinExpected).slice(-2)
-    var res23 = isBehindExpected
+    var res6  = errorDateCnt
+    var res7  = ('000' + roudouTotalHour).slice(-3)
+    var res8  = ('00' + roudouTotalMin).slice(-2)
+    var res9  = ('000' + roudouTotalHourExpected).slice(-3)
+    var res10 = ('00' + roudouTotalMinExpected).slice(-2)
+    var res11 = ('000' + roudouRemainHour).slice(-3)
+    var res12 = ('00' + roudouRemainMin).slice(-2)
+    var res13 = ('00' + roudouRemainAvgHour).slice(-2)
+    var res14 = ('00' + roudouRemainAvgMin).slice(-2)
+    var res15 = ('000' + roudouAheadBehindHour).slice(-2)
+    var res16 = ('00' + roudouAheadBehindMin).slice(-2)
+    var res17 = isBehind
+    var res18 = ('000' + roudouRemainHourExpected).slice(-3)
+    var res19 = ('00' + roudouRemainMinExpected).slice(-2)
+    var res20 = ('00' + roudouRemainAvgHourExpected).slice(-2)
+    var res21 = ('00' + roudouRemainAvgMinExpected).slice(-2)
+    var res22 = ('000' + roudouAheadBehindHourExpected).slice(-2)
+    var res23 = ('00' + roudouAheadBehindMinExpected).slice(-2)
+    var res24 = isBehindExpected
 
     console.log(
 `
@@ -248,25 +266,29 @@
 # 前日までの計測
     - 経過日数: ${ res3 }日
     - 残日数: ${ res4 }日
-    - 欠勤日数: ${ res5 }日（申請中含む）
 
-    - 労働時間（現状）: ${ res6 }:${ res7 }
-    - 労働時間（見込）: ${ res8 }:${ res9 }
+    - 勤怠異常日数（各種申請中の日を含む）
+        - 欠勤: ${ res5 }日
+        - エラー: ${ res6 }日（打刻申請中、等を含む）
+
+    - 労働時間
+        - 現状: ${ res7 }:${ res8 }
+        - 見込: ${ res9 }:${ res10 }
 
 # 結論
     ## 現状
     - 今日を含めてあと
-        - 月末までに ${ res10 }:${ res11 } 働くんやで
-        - 1日平均で ${ res12 }:${ res13 } 働くんやで
+        - 月末までに ${ res11 }:${ res12 } 働くんやで
+        - 1日平均で ${ res13 }:${ res14 } 働くんやで
     - 以降毎日8h働くと
-        - ${ res14 }:${ res15 } ${ res16 ? '足りない' : 'の総残業時間' }やで
+        - ${ res15 }:${ res16 } ${ res17 ? '足りない' : 'の総残業時間' }やで
 
-    ## 見込み（欠勤日の申請が承認された=8h労働したとみなした場合）
+    ## 見込み（勤怠異常が発生している日に、8h労働したとみなして算出した場合）
     - 今日を含めてあと
-        - 月末までに ${ res17 }:${ res18 } 働くんやで
-        - 1日平均で ${ res19 }:${ res20 } 働くんやで
+        - 月末までに ${ res18 }:${ res19 } 働くんやで
+        - 1日平均で ${ res20 }:${ res21 } 働くんやで
     - 以降毎日8h働くと
-        - ${ res21 }:${ res22 } ${ res23 ? '足りない' : 'の総残業時間' }やで
+        - ${ res22 }:${ res23 } ${ res24 ? '足りない' : 'の総残業時間' }やで
 `
     )
 
