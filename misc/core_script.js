@@ -255,6 +255,9 @@
     var res23 = ('00' + roudouAheadBehindMinExpected).slice(-2)
     var res24 = isBehindExpected
 
+    var cleared         = syoteiHour <= roudouTotalHour
+    var clearedExpected = syoteiHour <= roudouTotalHourExpected
+
     console.log(
 `
 ※ 前日までのデータで算出
@@ -276,17 +279,35 @@
         - 見込: ${ res9 }:${ res10 }
 
 # 結論
-    ## 現状
+    ## 現状`
++(
+cleared ?
+`
+    - もう働かなくてええんやで！
+        - やったやね`
+:
+`
     - 今日を含めてあと
         - 月末までに ${ res11 }:${ res12 } 働くんやで
-        - 1日平均で ${ res13 }:${ res14 } 働くんやで
+        - 1日平均で ${ res13 }:${ res14 } 働くんやで`
+)+
+`
     - 以降毎日8h働くと
         - ${ res15 }:${ res16 } ${ res17 ? '足りない' : 'の総残業時間' }やで
 
-    ## 見込み（勤怠異常が発生している日に、8h労働したとみなして算出した場合）
+    ## 見込み（勤怠異常が発生している日に、8h労働したとみなして算出した場合）`
++(
+clearedExpected ?
+`
+    - もう働かなくてええんやで！
+        - やったやね`
+:
+`
     - 今日を含めてあと
         - 月末までに ${ res18 }:${ res19 } 働くんやで
-        - 1日平均で ${ res20 }:${ res21 } 働くんやで
+        - 1日平均で ${ res20 }:${ res21 } 働くんやで`
+)+
+`
     - 以降毎日8h働くと
         - ${ res22 }:${ res23 } ${ res24 ? '足りない' : 'の総残業時間' }やで
 `
