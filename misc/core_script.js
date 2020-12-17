@@ -68,6 +68,9 @@
             var tdMonth = Number(dateMatched[1])
             var tdDate  = Number(dateMatched[2])
 
+            console.log(dateMatched)
+            console.log(today.getDate(), tdDate)
+
             if (today.getDate() <= tdDate) {
                 return // 本日以降
             }
