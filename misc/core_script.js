@@ -82,9 +82,8 @@
             }
 
             // -- 勤怠エラー日数（手動打刻申請中、など）
-            if (tr.style.backgroundColor === 'pink') {
-                // ↓ これでもいい
-                // tr.getAttribute('style') // -> 'background-color: pink'
+            // if (tr.style.backgroundColor === 'pink') { // 旧domでの判定
+            if (tr.classList.contains('jbc-table-danger') || tr.classList.contains('jbc-table-warning')) {
                 errorDateCnt++
                 return
             }
