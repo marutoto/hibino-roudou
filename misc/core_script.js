@@ -17,9 +17,13 @@
         return [isMinus, hour, min]
     }
 
-    // -- 所定労働時間
+    // -- ソーステーブルを取得
+    var shoteiTable = document.querySelectorAll('table.jbc-table')[1]
+    var jitsuTable = document.querySelector('table.table.jbc-table.text-center.jbc-table-bordered')
+
+    // -- 所定労働時間をトリミング
     var syotei = (function () {
-        var trs = Array.prototype.slice.call(document.querySelectorAll('.infotpl table tbody tr'))
+        var trs = Array.prototype.slice.call(shoteiTable.querySelectorAll('tbody tr'))
         var shoteiTr = trs.find(function (tr) {
             return tr.querySelector('th').innerHTML.trim() === '所定労働日数'
         })
@@ -27,7 +31,7 @@
         return Number(shoteiMatched[1])
     })()
 
-    // -- 経過日数・実労働時間 （前日まで。当日は含めない）
+    // -- 経過日数・実労働時間（前日まで。当日は含めない）をトリミング
     var jitsu = (function () {
         var passedDateCnt = 0
         var absenceDateCnt = 0
@@ -37,7 +41,7 @@
 
         // ---
 
-        var hibinoganbariTrs = Array.prototype.slice.call(document.querySelectorAll('table.note tr'))
+        var hibinoganbariTrs = Array.prototype.slice.call(jitsuTable.querySelectorAll('tbody tr'))
         var titleTr = hibinoganbariTrs[0]
         hibinoganbariTrs.shift() // タイトル行削除
         hibinoganbariTrs.pop()   // 合計行削除
