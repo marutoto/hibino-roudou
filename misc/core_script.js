@@ -42,9 +42,10 @@
         // ---
 
         var hibinoganbariTrs = Array.prototype.slice.call(jitsuTable.querySelectorAll('tbody tr'))
-        var titleTr = hibinoganbariTrs[0]
-        hibinoganbariTrs.shift() // タイトル行削除
-        hibinoganbariTrs.pop()   // 合計行削除
+
+        // ↓ 不要になった
+        // hibinoganbariTrs.shift() // タイトル行削除
+        // hibinoganbariTrs.pop()   // 合計行削除
 
         var tdEqDate    = 0 // 0: 日付
         var tdEqHoliday = 1 // 1: 休日区分
@@ -67,9 +68,6 @@
             var dateMatched = tds[tdEqDate].innerHTML.trim().match(/(\d+)\/(\d+)/)
             var tdMonth = Number(dateMatched[1])
             var tdDate  = Number(dateMatched[2])
-
-            console.log(dateMatched)
-            console.log(today.getDate(), tdDate)
 
             if (today.getDate() <= tdDate) {
                 return // 本日以降
