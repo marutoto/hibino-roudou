@@ -4,7 +4,7 @@
 ```
 var ele = document.createElement('script')
 ele.type = 'text/javascript'
-ele.src = 'https://rawgit.com/marutoto/hibino-roudou/master/misc/core_script.js'
+ele.src = 'https://rawgit.com/marutoto/hibino-roudou/master/misc/core_script.js?d='+(new Date().getTime())
 document.body.appendChild(ele)
 ```
 
