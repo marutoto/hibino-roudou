@@ -14,6 +14,15 @@
     return Number(ret[1]) * 60 + Number(ret[2])
   }
 
+  function getTimeDisplay(targetMins) {
+    if (targetMins <= 0) {
+      return '00:00'
+    }
+    var hours = Math.floor(targetMins / 60)
+    var minutes = targetMins % 60
+    return `${ hours }:${ ('00' + minutes).slice(-2) }`
+  }
+
   function output(
     ret1, // 所定日数
     ret2, // 所定時間
@@ -26,13 +35,13 @@
   ) {
     console.log(
 `
-# 記入分までのデータで算出
+# 記入分(前日)までのデータで算出
 
 ## 所定
 - 日数: ${ ret1 }日
 - 時間: ${ ret2 }時間
 
-## 記入分までの計測
+## 計測
 - 記入日数: ${ ret3 }日
 - 残日数: ${ ret4 }日
 
@@ -74,21 +83,17 @@
   var jitsuDays = retrieveDay(_jitsuDays)
   var jitsuTimesMin = retrieveTimeAsMinutes(_jitsuTimes)
 
-  console.log('shoteiDays', shoteiDays)
-  console.log('shoteiTimesMin', shoteiTimesMin)
-  console.log('jitsuDays', jitsuDays)
-  console.log('jitsuTimesMin', jitsuTimesMin)
-
-  // !!! ここから再開 !!!
+  var zanDays = shoteiDays - jitsuDays
+  var zanTimesMin = shoteiTimesMin - jitsuTimesMin
 
   output(
     shoteiDays, // 所定日数
     shoteiTimesMin / 60, // 所定時間
     jitsuDays, // 記入日数
-    shoteiDays - jitsuDays, // 残日数
-    `${ Math.floor(jitsuTimesMin / 60) }:${ jitsuTimesMin % 60 }`, // 実労働時間
-    'XX:XX', // あとこれだけ働く必要がある 月末まで
-    'XX:XX', // あとこれだけ働く必要がある 1日平均
-    'XX:XX', // 毎日7h働くと残業時間は
+    zanDays, // 残日数
+    getTimeDisplay(jitsuTimesMin), // 実労働時間
+    getTimeDisplay(zanTimesMin), // あとこれだけ働く必要がある 月末まで
+    getTimeDisplay(Math.ceil(zanTimesMin / zanDays)), // あとこれだけ働く必要がある 1日平均
+    getTimeDisplay((jitsuTimesMin + zanDays * 7 * 60) - shoteiTimesMin), // 毎日7h働くと残業時間は
   )
 })()
