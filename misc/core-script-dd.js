@@ -1,4 +1,6 @@
 (function () {
+  const TIME_DISPLAY_ZERO = '00:00'
+
   function retrieveDay(dayStr) {
     // dayStr: '12 日'
     var ret = dayStr.match(/\d*/g)
@@ -16,7 +18,7 @@
 
   function getTimeDisplay(targetMins) {
     if (targetMins <= 0) {
-      return '00:00'
+      return TIME_DISPLAY_ZERO
     }
     var hours = Math.floor(targetMins / 60)
     var minutes = targetMins % 60
@@ -57,8 +59,16 @@
 - 残日数: ${ ret5 }日
 
 ## あと何時間？
-- 月末までに ${ ret6 } 働くんやで
-- 1日平均で ${ ret7 } 働くんやで
+${
+  (ret6 === TIME_DISPLAY_ZERO && ret7 === TIME_DISPLAY_ZERO)
+    ? (
+`- もう今月は働かなくてええんやで！やったね！`
+    )
+    : (
+`- 月末までに ${ ret6 } 働くんやで
+- 1日平均で ${ ret7 } 働くんやで`
+    )
+}
 
 ## 毎日7h働くと残業時間は
 - ${ ret8 } やで
