@@ -1,5 +1,6 @@
 (function () {
   const TIME_DISPLAY_ZERO = '00:00'
+  const SHOTEI_ROUDOU_HOURS_PER_DAY = 7
 
   function retrieveDay(dayStr) {
     // dayStr: '12 日'
@@ -41,7 +42,7 @@
 ※ 記入分(前日)までのデータで算出
 ============================
 
-# 所定
+# 所定 (${ SHOTEI_ROUDOU_HOURS_PER_DAY }h/Day)
 - 日数: ${ ret1 }日
 - 時間: ${ ret2 }時間
 
@@ -62,7 +63,7 @@
 ${
   (ret6 === TIME_DISPLAY_ZERO && ret7 === TIME_DISPLAY_ZERO)
     ? (
-`- もう今月は働かなくてええんやで！
+`- 今月はもう働かなくてええんやで！
 - やったね！`
     )
     : (
@@ -112,6 +113,6 @@ ${
     zanDays, // 残日数
     getTimeDisplay(zanTimesMin), // あとこれだけ働く必要がある 月末まで
     getTimeDisplay(Math.ceil(zanTimesMin / zanDays)), // あとこれだけ働く必要がある 1日平均
-    getTimeDisplay((jitsuTimesMin + zanDays * 7 * 60) - shoteiTimesMin), // 毎日7h働くと残業時間は
+    getTimeDisplay((jitsuTimesMin + zanDays * SHOTEI_ROUDOU_HOURS_PER_DAY * 60) - shoteiTimesMin), // 毎日7h働くと残業時間は
   )
 })()
