@@ -91,7 +91,7 @@ ${
   var mainTable = document.getElementById('mainTable')
   var dayRows = mainTable.querySelectorAll('tr.days')
 
-  var kyuukaDays = 0
+  var _kyuukaDays = 0
   dayRows.forEach((elRow) => {
     // 休暇を取得
     // 休暇は実働に計上されないぽいので、こっちから減らしにいく必要がある
@@ -100,11 +100,12 @@ ${
     const elStat = elRow.querySelector('.dval.vstatus')
     const statStr = elStat.getAttribute('title') // '通常出勤日' '〇〇休暇' '午前半休' '午後半休' '時間単位有休' ...
     if (statStr.match('休暇')) {
-      kyuukaDays++
+      _kyuukaDays++
     }
   })
+
+  var kyuukaDays = _kyuukaDays
   var kyuukaTimesMin = retrieveTimeAsMinutes(`${ SHOTEI_ROUDOU_HOURS_PER_DAY * kyuukaDays }:00`)
-  console.log('kyuukaTimesMin', kyuukaTimesMin)
 
   // --- bottom tables
   var bottomSummaryTables = document.getElementById('bottomSummaryTable').querySelectorAll('table')
