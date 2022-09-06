@@ -29,12 +29,13 @@
   }
 
   function output(
-    shoteiRoudouHoursPerDay,
-    kyuukaDays, // 休暇日数
-    ret1, // 所定日数
-    ret2, // 所定時間
-    ret3, // 記入日数
-    ret4, // 実労働時間
+    shoteiSec1,
+    shoteiSec2, // 所定日数
+    shoteiSec3, // 所定時間
+    keisokuSec1, // 実働日数
+    keisokuSec2, // 休暇日数
+    keisokuSec3, // 実労働時間
+    keisokuSec4, // 休暇時間
     ret5, // 残日数
     ret6, // あとこれだけ働く必要がある 月末まで
     ret7, // あとこれだけ働く必要がある 1日平均
@@ -46,17 +47,18 @@
 ※ 記入分(前日)までのデータで算出
 ============================
 
-# 所定 (${ shoteiRoudouHoursPerDay }h/Day)
-- 日数: ${ ret1 }日
-- 時間: ${ ret2 }時間
+# 所定 (${ shoteiSec1 }h/Day)
+- 日数: ${ shoteiSec2 }日
+- 時間: ${ shoteiSec3 }時間
 
 ----------------------------
 
 # 計測
-- 記入日数: ${ ret3 }日
-- 実労働時間: ${ ret4 }
+- 実働日数: ${ keisokuSec1 }日
+- 休暇日数: ${ keisokuSec2 }日
 
-- 休暇日数: ${ kyuukaDays }日
+- 実働時間: ${ keisokuSec3 }
+- 休暇時間: ${ keisokuSec4 }
 
 ----------------------------
 
@@ -123,24 +125,25 @@ ${
 
   var shoteiDays = retrieveDay(_shoteiDays)
   var shoteiTimesMin = retrieveTimeAsMinutes(_shoteiTimes)
-  var keisokuDays = shoteiDays - kyuukaDays // 休暇分マイナス
-  var keisokuTimesMin = shoteiTimesMin - kyuukaTimesMin // 休暇分マイナス
+  var shoteiWithKyuukaDays = shoteiDays - kyuukaDays // 休暇分マイナス
+  var shoteiWithKyuukaTimesMin = shoteiTimesMin - kyuukaTimesMin // 休暇分マイナス
   var jitsuDays = retrieveDay(_jitsuDays)
   var jitsuTimesMin = retrieveTimeAsMinutes(_jitsuTimes)
 
-  var zanDays = keisokuDays - jitsuDays
-  var zanTimesMin = keisokuTimesMin - jitsuTimesMin
+  var zanDays = shoteiWithKyuukaDays - jitsuDays
+  var zanTimesMin = shoteiWithKyuukaTimesMin - jitsuTimesMin
 
   output(
     SHOTEI_ROUDOU_HOURS_PER_DAY,
-    kyuukaDays, // 休暇日数
     shoteiDays, // 所定日数
     shoteiTimesMin / 60, // 所定時間
-    jitsuDays, // 記入日数
+    jitsuDays, // 実働日数
+    kyuukaDays, // 休暇日数
     getTimeDisplay(jitsuTimesMin), // 実労働時間
+    getTimeDisplay(kyuukaTimesMin), // 休暇時間
     zanDays, // 残日数
     getTimeDisplay(zanTimesMin), // あとこれだけ働く必要がある 月末まで
     getTimeDisplay(Math.ceil(zanTimesMin / zanDays)), // あとこれだけ働く必要がある 1日平均
-    getTimeDisplay((jitsuTimesMin + zanDays * SHOTEI_ROUDOU_HOURS_PER_DAY * 60) - keisokuTimesMin), // 毎日7h働くと残業時間は
+    getTimeDisplay((jitsuTimesMin + zanDays * SHOTEI_ROUDOU_HOURS_PER_DAY * 60) - shoteiWithKyuukaTimesMin), // 毎日7h働くと残業時間は
   )
 })()
