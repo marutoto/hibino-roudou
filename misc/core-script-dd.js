@@ -34,8 +34,10 @@
     shoteiSec3, // 所定時間
     keisokuSec1, // 実働日数
     keisokuSec2, // 休暇日数
-    keisokuSec3, // 実労働時間
-    keisokuSec4, // 休暇時間
+    keisokuSec3, // 合計日数
+    keisokuSec4, // 実労働時間
+    keisokuSec5, // 休暇時間
+    keisokuSec6, // 合計時間
     ret5, // 残日数
     ret6, // あとこれだけ働く必要がある 月末まで
     ret7, // あとこれだけ働く必要がある 1日平均
@@ -56,9 +58,11 @@
 # 計測
 - 実働日数: ${ keisokuSec1 }日
 - 休暇日数: ${ keisokuSec2 }日
+- 計: ${ keisokuSec3 }日
 
-- 実働時間: ${ keisokuSec3 }
-- 休暇時間: ${ keisokuSec4 }
+- 実働時間: ${ keisokuSec4 }
+- 休暇時間: ${ keisokuSec5 }
+- 計: ${ keisokuSec6 }
 
 ----------------------------
 
@@ -139,8 +143,10 @@ ${
     shoteiTimesMin / 60, // 所定時間
     jitsuDays, // 実働日数
     kyuukaDays, // 休暇日数
+    jitsuDays + kyuukaDays, // 合計日数
     getTimeDisplay(jitsuTimesMin), // 実労働時間
     getTimeDisplay(kyuukaTimesMin), // 休暇時間
+    getTimeDisplay(jitsuTimesMin + kyuukaTimesMin), // 合計時間
     zanDays, // 残日数
     getTimeDisplay(zanTimesMin), // あとこれだけ働く必要がある 月末まで
     getTimeDisplay(Math.ceil(zanTimesMin / zanDays)), // あとこれだけ働く必要がある 1日平均
