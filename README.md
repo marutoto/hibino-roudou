@@ -5,11 +5,18 @@
 const scriptName = 'core-script.ent.js'
 const ele = document.createElement('script')
 ele.type = 'text/javascript'
-ele.src = `https://rawgit.com/marutoto/hibino-roudou/master/misc/${scriptName}?d=${new Date().getTime()}`
+ele.src = `https://cdn.jsdelivr.net/gh/marutoto/hibino-roudou/misc/${scriptName}?d=${new Date().getTime()}`
 document.body.appendChild(ele)
 ```
 
-This script calls `rawgit.com`, NOT `raw.githubusercontent.com`.
+This script calls via CDN
+
+```
+x https://rawgit.com/marutoto/hibino-roudou/master/misc/core-script.ent.js
+o https://raw.githubusercontent.com/marutoto/hibino-roudou/master/misc/core-script.ent.js
+o https://cdn.jsdelivr.net/gh/marutoto/hibino-roudou/misc/core-script.ent.js
+```
+
 ref. https://stackoverflow.com/questions/17341122/link-and-execute-external-javascript-file-hosted-on-github
 
 ## Core Script
